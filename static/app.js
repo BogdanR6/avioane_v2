@@ -105,7 +105,9 @@ const GameUI = () => {
 
     // WebSocket connection
     React.useEffect(() => {
-        const ws = new WebSocket(`ws://${window.location.host}/ws`);
+        const protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
+        const wsUrl = protocol + window.location.host + '/ws';
+        const ws = new WebSocket(wsUrl);
         
         ws.onopen = () => {
             console.log('Connected to server');
