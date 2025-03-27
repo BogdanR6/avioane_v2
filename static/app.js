@@ -101,7 +101,10 @@ const GameUI = () => {
         markedCells: new Map(),
         lastAttackedCell: null,
         showJoinInput: false,
+        lastHoveredIndex: null, 
     });
+
+    const [, forceUpdate] = React.useState(0); // Forece UI refresh when state changes
 
     // WebSocket connection
     React.useEffect(() => {
@@ -251,6 +254,13 @@ const GameUI = () => {
         return () => window.removeEventListener('keydown', handleKeyPress);
     }, [gameState.placementPhase]);
 
+    React.useEffect(() => {
+        if (gameState.lastHoveredIndex !== null) {
+            handleGridHover(gameState.lastHoveredIndex)
+            forceUpdate(n => n + 1)
+        }
+    }, [gameState.currentPlaneRotation]); // trigger when currentPlaneRoatation updates
+
     const getPlanePositions = (index, rotation) => {
         const row = Math.floor(index / 10);
         const col = index % 10;
@@ -331,7 +341,8 @@ const GameUI = () => {
         const positions = getPlanePositions(index, gameState.currentPlaneRotation);
         setGameState(prev => ({
             ...prev,
-            previewPositions: positions
+            previewPositions: positions,
+            lastHoveredIndex: index,
         }));
     };
 
